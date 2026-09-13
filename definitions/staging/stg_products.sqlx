@@ -1,0 +1,19 @@
+
+config {
+  type: "view",
+  schema: "staging",
+  description: "Productos, una fila por producto.",
+  assertions: {
+    uniqueKey: ["product_id"],
+    nonNull: ["product_id"]
+  }
+}
+
+SELECT
+  id AS product_id,
+  COALESCE(category, 'Sin categoría') AS category,
+  brand,
+  department,
+  cost,
+  retail_price
+FROM ${ref("products")}

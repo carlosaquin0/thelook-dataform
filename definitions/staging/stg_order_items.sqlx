@@ -1,0 +1,19 @@
+
+config {
+  type: "view",
+  schema: "staging",
+  description: "Ítems de órdenes, una fila por ítem vendido.",
+  assertions: {
+    uniqueKey: ["order_item_id"],
+    nonNull: ["order_item_id", "order_id", "product_id", "sale_price"]
+  }
+}
+
+SELECT
+  id AS order_item_id,
+  order_id,
+  product_id,
+  status AS item_status,
+  sale_price,
+  created_at
+FROM ${ref("order_items")}

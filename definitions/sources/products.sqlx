@@ -1,0 +1,8 @@
+
+config {
+  type: "declaration",
+  database: "bigquery-public-data",
+  schema: "thelook_ecommerce",
+  name: "products",
+  description: "Catálogo de productos (fuente pública)."
+}

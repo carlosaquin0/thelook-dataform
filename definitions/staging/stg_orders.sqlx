@@ -1,0 +1,18 @@
+
+config {
+  type: "view",
+  schema: "staging",
+  description: "Órdenes limpias, una fila por orden.",
+  assertions: {
+    uniqueKey: ["order_id"],
+    nonNull: ["order_id", "user_id", "created_at"]
+  }
+}
+
+SELECT
+  order_id,
+  user_id,
+  status AS order_status,
+  num_of_item AS items_count,
+  created_at
+FROM ${ref("orders")}

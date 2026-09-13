@@ -1,0 +1,33 @@
+
+config {
+  type: "table",
+  schema: "marts",
+  description: "Tabla de hechos: una fila por ítem vendido, con datos de orden y producto.",
+  bigquery: {
+    partitionBy: "order_date",
+    clusterBy: ["category", "item_status"]
+  },
+  assertions: {
+    uniqueKey: ["order_item_id"],
+    nonNull: ["order_item_id", "order_id", "order_date", "sale_price"],
+    rowConditions: ["sale_price >= 0"]
+  }
+}
+
+SELECT
+  oi.order_item_id,
+  oi.order_id,
+  o.user_id,
+  DATE(oi.created_at) AS order_date,
+  oi.item_status,
+  p.category,
+  p.brand,
+  p.department,
+  oi.sale_price,
+  p.cost,
+  ROUND(oi.sale_price - p.cost, 2) AS margin
+FROM ${ref("stg_order_items")} AS oi
+INNER JOIN ${ref("stg_orders")} AS o
+  ON oi.order_id = o.order_id
+INNER JOIN ${ref("stg_products")} AS p
+  ON oi.product_id = p.product_id
