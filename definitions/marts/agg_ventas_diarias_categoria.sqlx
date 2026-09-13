@@ -1,0 +1,26 @@
+
+config {
+  type: "table",
+  schema: "marts",
+  description: "Ventas diarias por categoría, sin ítems cancelados ni devueltos.",
+  bigquery: {
+    partitionBy: "order_date",
+    clusterBy: ["category"]
+  },
+  assertions: {
+    uniqueKey: ["order_date", "category"],
+    nonNull: ["order_date", "category", "revenue"],
+    rowConditions: ["items_count > 0"]
+  }
+}
+
+SELECT
+  order_date,
+  category,
+  COUNT(DISTINCT order_id) AS orders_count,
+  COUNT(*) AS items_count,
+  ROUND(SUM(sale_price), 2) AS revenue,
+  ROUND(SUM(margin), 2) AS margin
+FROM ${ref("fct_order_items")}
+WHERE item_status NOT IN ('Cancelled', 'Returned')
+GROUP BY order_date, category
